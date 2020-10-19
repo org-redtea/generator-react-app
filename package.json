@@ -1,0 +1,16 @@
+{
+  "name": "@redtea/generator-react-app",
+  "version": "0.0.0",
+  "description": "React app yeoman generator",
+  "author": "Kirill Khoroshilov<mr.hokid@gmail.com>",
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "create-react-app": "3.3.0",
+    "yeoman-generator": "4.4.0"
+  }
+}

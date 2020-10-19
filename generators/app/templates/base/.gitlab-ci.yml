@@ -1,0 +1,25 @@
+image: docker:stable
+
+stages:
+  - build
+
+services:
+  - docker:dind
+
+build:
+  stage: build
+  only:
+    - tags
+  script:
+    - build_image
+
+.init_functions: &init_functions |
+  function build_image() {
+    docker build \
+    --build-arg PORT="$PORT" \
+    .
+  }
+
+before_script:
+  - docker info
+  - *init_functions
