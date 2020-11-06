@@ -11,7 +11,7 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "create-react-app": "3.3.0",
+    "create-react-app": "4.0.0",
     "yeoman-generator": "4.4.0"
   }
 }

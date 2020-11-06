@@ -17,7 +17,7 @@ class Generator extends YoGenerator {
             'history@4.10.1',
             'inversify@5.0.1',
             'reflect-metadata@0.1.13',
-            'inversify-react@0.4.3',
+            '@redtea/react-inversify@1.0.1',
             'react-router-dom@5.1.2',
             '@types/react-router-dom@5.1.3',
             'mobx@5.15.2',
@@ -61,7 +61,7 @@ class Generator extends YoGenerator {
     configuring() {
         this.log('Run create-react-app...');
         this.craRunner.run(this.projectName, {
-            template: 'typescript',
+            template: 'cra-template-pwa-typescript',
             useNpm: this.useNPM
         });
 
@@ -69,17 +69,32 @@ class Generator extends YoGenerator {
     }
 
     writing() {
-        this.log('Overwriting template...');
+        this.log('Overwriting template');
 
         const toDelete = [];
+
         this.fs.delete(toDelete);
 
         this.fs.copyTpl(
-            this.templatePath('base'),
-            this.destinationPath(),
-            null,
-            null,
-            { globOptions: { dot: true } }
+          this.templatePath('base'),
+          this.destinationPath(),
+          null,
+          null,
+          {
+              globOptions: {
+                  dot: true,
+                  ignore: [
+                      this.templatePath('base/tsconfig.json')
+                  ]
+              }
+          }
+        );
+
+        this.fs.extendJSON(
+          this.destinationPath('tsconfig.json'),
+          this.fs.readJSON(
+            this.templatePath('base/tsconfig.json')
+          )
         );
 
         if (this.staticServer === 'nginx') {
@@ -87,9 +102,9 @@ class Generator extends YoGenerator {
                 this.destinationPath('serve.json')
             ]);
             this.fs.copyTpl(
-                this.templatePath('nginx-extension'),
-                this.destinationPath(),
-                null,
+              this.templatePath('nginx-extension'),
+              this.destinationPath(),
+              null,
                 null,
                 { globOptions: { dot: true } }
             );

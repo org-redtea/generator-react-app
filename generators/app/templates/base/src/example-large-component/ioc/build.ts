@@ -1,6 +1,6 @@
 import {Container} from "inversify";
-import {globalIOCContainer} from "../ioc/container";
-import {State} from "./state/State";
+import {globalIOCContainer} from "../../ioc/container";
+import {State} from "../state/State";
 import {LOCAL_IOC_TYPES} from "./iocTypes";
 
 export function buildContainer() {

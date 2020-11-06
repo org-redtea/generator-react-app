@@ -1,31 +1,32 @@
 import React from 'react';
-import {Provider as IoCProvider} from 'inversify-react';
+import {Container} from 'inversify';
 import {Route, Router, Switch} from 'react-router-dom';
-import {globalIOCContainer} from './ioc/container';
+import {Context as InversifyContext} from '@redtea/react-inversify';
 import {GLOBAL_IOC_TYPES} from "./ioc/iocTypes";
 import {Provider as MobxProvider} from 'mobx-react';
 import {LargeComponent} from './example-large-component';
-import {ExampleState, exampleStatePath} from './example-state/State';
-import {ExampleComponent} from './example-component';
+import {ExampleState} from './states/ExampleState';
+import {ExampleFnComponent} from './example-fn-component';
+import {createProviderStateProps} from './states/utils';
 
-const App: React.FC = () => {
+const App: React.FC<{ container: Container }> = (props) => {
     const states = {
-        [exampleStatePath]: globalIOCContainer.get<ExampleState>(GLOBAL_IOC_TYPES.states.Example)
+        [GLOBAL_IOC_TYPES.states.Example]: props.container.get<ExampleState>(GLOBAL_IOC_TYPES.states.Example)
     };
 
     return (
-        <IoCProvider container={globalIOCContainer}>
-            <Router history={globalIOCContainer.get(GLOBAL_IOC_TYPES.browserHistory)}>
-                <MobxProvider {...states}>
+        <InversifyContext.Provider value={props.container}>
+            <Router history={props.container.get(GLOBAL_IOC_TYPES.browserHistory)}>
+                <MobxProvider {...createProviderStateProps(states)}>
                     <Switch>
                         <Route exact path="/">
-                            <ExampleComponent/>
+                            <ExampleFnComponent/>
                             <LargeComponent/>
                         </Route>
                     </Switch>
                 </MobxProvider>
             </Router>
-        </IoCProvider>
+        </InversifyContext.Provider>
     );
 };
 

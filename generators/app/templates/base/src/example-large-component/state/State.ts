@@ -1,7 +1,7 @@
 import {observable} from "mobx";
 import {GLOBAL_IOC_TYPES} from '../../ioc/iocTypes';
 import {decorate, inject, injectable} from "inversify";
-import {ExampleState} from '../../example-state/State';
+import {ExampleState} from '../../states/ExampleState';
 
 @injectable()
 export class State {
