@@ -5,7 +5,8 @@
   "author": "Kirill Khoroshilov<mr.hokid@gmail.com>",
   "files": [
     "generators",
-    "utils"
+    "utils",
+    "README.md"
   ],
   "keywords": [
     "yeoman-generator"
