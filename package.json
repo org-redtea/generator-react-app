@@ -4,7 +4,8 @@
   "description": "React app yeoman generator",
   "author": "Kirill Khoroshilov<mr.hokid@gmail.com>",
   "files": [
-    "generators"
+    "generators",
+    "utils"
   ],
   "keywords": [
     "yeoman-generator"
