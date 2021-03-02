@@ -114,8 +114,13 @@ class Generator extends YoGenerator {
     }
 
     install() {
-        this.yarnInstall(this.dependencies);
-        this.yarnInstall(this.devDependencies, { dev: true });
+        if (this.useNPM) {
+            this.npmInstall(this.dependencies);
+            this.npmInstall(this.devDependencies, { dev: true });
+        } else {
+            this.yarnInstall(this.dependencies);
+            this.yarnInstall(this.devDependencies, { dev: true });
+        }
     }
 
     end() {
