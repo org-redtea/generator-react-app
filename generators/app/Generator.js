@@ -62,7 +62,7 @@ class Generator extends YoGenerator {
         this.log('Run create-react-app...');
         this.craRunner.run(this.projectName, {
             template: 'cra-template-pwa-typescript',
-            useNpm: this.useNPM
+            useNPM: this.useNPM
         });
 
         this.destinationRoot(this.destinationPath(this.projectName));

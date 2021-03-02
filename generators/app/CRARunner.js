@@ -3,19 +3,44 @@ const semver = require('semver');
 const runSync = require('../../utils/runSync');
 
 class CRARunner {
-    constructor(generatorInst, generatorRootPath, ) {
-        this.generatorInst = generatorInst;
+    constructor(generatorInst) {
         this.spawn = generatorInst.spawnCommandSync.bind(generatorInst);
-        this.generatorRootPath = generatorRootPath;
-        this.craPath = this._getCRAPath();
-        this._checkCRAVersion();
     }
 
     run(projectName, options) {
-        runSync(this.spawn, this.craPath, [
-            projectName,
-            ...this._getCraArgsFromOptions(options)
-        ]);
+        const manager = options.useNPM ?
+          'npx'
+          : 'yarn';
+
+        this._checkBinary(manager);
+
+        if (manager === 'npx') {
+            runSync(this.spawn, 'npx', [
+                'create-react-app@4.0.x',
+                projectName,
+                ...this._getCraArgsFromOptions(options)
+            ]);
+        } else if (manager === 'yarn') {
+            const {stdout} = runSync(this.spawn, 'yarn', [
+                'info',
+                '--json',
+                'create-react-app'
+            ], {stdio: 'pipe'});
+
+            const info = JSON.parse(stdout);
+            const latestVersion = info.data['dist-tags'].latest;
+
+            if (!semver.satisfies(latestVersion, '4.0.x')) {
+                throw new Error(`The generator does not support yarn of version ${latestVersion}`);
+            }
+
+            runSync(this.spawn, 'yarn', [
+                'create',
+                'react-app',
+                projectName,
+                ...this._getCraArgsFromOptions(options)
+            ]);
+        }
     }
 
     _getCraArgsFromOptions(options) {
@@ -25,25 +50,24 @@ class CRARunner {
             args.push('--template', options.template);
         }
 
-        if (options.useNpm) {
+        if (options.useNPM) {
             args.push('--use-npm');
         }
 
         return args;
     }
 
-    _getCRAPath() {
-        return require.resolve('create-react-app');
-    }
+    _checkBinary(name) {
+        try {
+            runSync(this.spawn, name, [
+                '--version'
+            ]);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                throw new Error(`${name} does not exists. Install it first.`)
+            }
 
-    _checkCRAVersion() {
-        const craPkg = require(path.resolve(path.dirname(this.craPath), 'package.json'));
-        const generatorPkg = require(path.resolve(this.generatorRootPath, 'package.json'));
-
-        const requiredV = generatorPkg.dependencies['create-react-app'];
-
-        if (!semver.satisfies(craPkg.version, requiredV)) {
-            throw new Error(`"create-react-app" must match ${requiredV} version, got ${craPkg.version}`);
+            throw error;
         }
     }
 }
