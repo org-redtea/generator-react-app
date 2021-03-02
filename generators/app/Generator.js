@@ -70,6 +70,8 @@ class Generator extends YoGenerator {
 
     writing() {
         this.log('Overwriting template');
+        // Don`t ask user to confirm overwriting files
+        this.conflicter.force = true;
 
         const toDelete = [];
 
